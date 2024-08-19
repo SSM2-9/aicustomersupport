@@ -1,13 +1,15 @@
 'use client'
 
-import { Box, Button, Stack, TextField } from '@mui/material'
+import { Box, Button, Stack, TextField, Typography } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
+import WeatherWidget from './components/WeatherWidget';
+
 
 export default function Home() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Hi! I'm the Headstarter support assistant. How can I help you today?",
+      content: "Hi! I'm the Paris Olympics 2024 customer support. How can I help you today?",
     },
   ])
   const [message, setMessage] = useState('')
@@ -88,9 +90,18 @@ export default function Home() {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundColor: 'rgba(255, 255, 255, 0.3)',
-        backgroundBlendMode: 'overlay'
+        backgroundBlendMode: 'overlay',
       }}
     >
+      <Box
+        position="fixed"
+        top="10px"
+        left="10px"
+        zIndex="10"
+      >
+        <WeatherWidget />
+      </Box>
+      
       <Box
           position="fixed"
           width="50px"
@@ -108,7 +119,7 @@ export default function Home() {
             style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
           >
             <img 
-              src="/1.png"
+              src="/1n.png"
               alt="Instagram icon"
               style={{ width: '40px', height: '40px', objectFit: 'contain' }}
             />
@@ -132,7 +143,7 @@ export default function Home() {
             style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
           >
             <img 
-              src="/2.png"
+              src="/2n.png"
               alt="Youtube icon"
               style={{ width: '40px', height: '40px', objectFit: 'contain' }}
             />
@@ -156,7 +167,7 @@ export default function Home() {
             style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
           >
             <img 
-              src="/3.png"
+              src="/3n.png"
               alt="Twitter icon"
               style={{ width: '40px', height: '40px', objectFit: 'contain' }}
             />
@@ -180,7 +191,7 @@ export default function Home() {
             style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
           >
             <img 
-              src="/4.png"
+              src="/4n.png"
               alt="Facebook icon"
               style={{ width: '40px', height: '40px', objectFit: 'contain' }}
             />
@@ -202,64 +213,69 @@ export default function Home() {
           maxHeight="100%"
         >
           {messages.map((message, index) => (
+          <Box
+            key={index}
+            display="flex"
+            justifyContent={
+              message.role === 'assistant' ? 'flex-start' : 'flex-end'
+            }
+          >
             <Box
-              key={index}
-              display="flex"
-              justifyContent={
-                message.role === 'assistant' ? 'flex-start' : 'flex-end'
+              bgcolor={
+                message.role === 'assistant'
+                  ? 'rgb(26, 52, 105)' 
+                  : 'rgb(155, 200, 221)'
               }
+              className="poppins-regular"
+              color="white"
+              borderRadius={16}
+              p={3}
             >
-              <Box
-                bgcolor={
-                  message.role === 'assistant'
-                    ? 'rgb(26, 52, 105)'
-                    : 'rgb(155, 200, 221)'
-                }
-
-                color="white"
-                borderRadius={16}
-                p={3}
-              >
-                {message.content}
-              </Box>
+              {message.content}
             </Box>
+          </Box>
           ))}
           <div ref={messagesEndRef} />
         </Stack>
         <Stack direction={'row'} spacing={2}>
-          <TextField 
-            label="Send your Message here"
-            variant="filled"
-            fullWidth
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled={isLoading}
-            sx={{
-              backgroundColor: 'rgba(132, 128, 166, 0.8)',
-              '& .MuiInputBase-input': {
-                color: 'white', // Text color
-              },
-              '& .MuiFormLabel-root': {
-                color: 'white', // Label color
-              },
-              '& .MuiFilledInput-underline:before': {
-                borderBottomColor: 'white', // Bottom underline color when not focused
-              },
-              '& .MuiFilledInput-underline:after': {
-                borderBottomColor: 'white', // Bottom underline color when focused
-              }
-            }}
-            InputProps={{
-              style: {
-                color: 'white', // Text color inside the input
-              },
-            }}
-          />
+        <TextField 
+        label="Send your Message here"
+        variant="filled"
+        fullWidth
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyPress={handleKeyPress}
+        disabled={isLoading}
+        sx={{
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          '& .MuiInputBase-input': {
+            color: 'rgb(24, 24, 51)', // Text color
+            fontFamily: 'Poppins, sans-serif', // Font family
+          },
+          '& .MuiFormLabel-root': {
+            color: 'rgb(24, 24, 51)', // Label color
+            fontFamily: 'Poppins, sans-serif', // Font family
+          },
+          '& .MuiFilledInput-underline:before': {
+            borderBottomColor: 'rgb(24, 24, 51)', // Bottom underline color when not focused
+          },
+          '& .MuiFilledInput-underline:after': {
+            borderBottomColor: 'rgb(24, 24, 51)', // Bottom underline color when focused
+          }
+        }}
+        InputProps={{
+          style: {
+            color: 'rgb(24, 24, 51)', // Text color inside the input
+            fontFamily: 'Poppins, sans-serif', // Font family
+          },
+        }}
+      />
+
           <Button 
             variant="contained" 
             onClick={sendMessage}
             disabled={isLoading}
+            className="poppins-medium"
             sx={{
               backgroundColor: 'rgb(217, 200, 137)',
               '&:hover': {
