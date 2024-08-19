@@ -1,95 +1,276 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+
+import { Box, Button, Stack, TextField } from '@mui/material'
+import { useState, useEffect, useRef } from 'react'
 
 export default function Home() {
+  const [messages, setMessages] = useState([
+    {
+      role: 'assistant',
+      content: "Hi! I'm the Headstarter support assistant. How can I help you today?",
+    },
+  ])
+  const [message, setMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const messagesEndRef = useRef(null)
+
+  const sendMessage = async () => {
+    if (!message.trim() || isLoading) return;
+    setIsLoading(true)
+    setMessage('')  // Clear the input field
+    setMessages((messages) => [
+      ...messages,
+      { role: 'user', content: message },  // Add the user's message to the chat
+      { role: 'assistant', content: '' },  // Add a placeholder for the assistant's response
+    ])
+  
+    try {
+      // Send the message to the server
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([...messages, { role: 'user', content: message }]),
+      })
+      const reader = response.body.getReader()  // Get a reader to read the response body
+      const decoder = new TextDecoder()  // Create a decoder to decode the response text
+  
+      let result = ''
+      // Function to process the text from the response
+      const processText = async ({ done, value }) => {
+        if (done) {
+          setIsLoading(false)
+          return result
+        }
+        const text = decoder.decode(value || new Uint8Array(), { stream: true })  // Decode the text
+        setMessages((messages) => {
+          let lastMessage = messages[messages.length - 1]  // Get the last message (assistant's placeholder)
+          let otherMessages = messages.slice(0, messages.length - 1)  // Get all other messages
+          return [
+            ...otherMessages,
+            { ...lastMessage, content: lastMessage.content + text },  // Append the decoded text to the assistant's message
+          ]
+        })
+        return reader.read().then(processText)  // Continue reading the next chunk of the response
+      }
+      await reader.read().then(processText)
+    } catch (error) {
+      console.error("Error sending message:", error)
+      setIsLoading(false)
+    }
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+      sendMessage()
+    }
+  }
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+    <Box
+      width="100vw"
+      height="100vh"
+      display="flex"
+      flexDirection="column"
+      sx={{
+        backgroundImage: 'url(/paris_olympics.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        backgroundBlendMode: 'overlay'
+      }}
+    >
+      <Box
+          position="fixed"
+          width="50px"
+          height="50px"
+          display="flex"
+          alignItems="center"
+          style={{
+            right: '0px',
+            zIndex: 10,
+          }}
+        >
+          <a href="https://www.instagram.com/olympicshospitality?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
             target="_blank"
             rel="noopener noreferrer"
+            style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+            <img 
+              src="/1.png"
+              alt="Instagram icon"
+              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
             />
           </a>
-        </div>
-      </div>
+        </Box>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+        <Box
+        position="fixed"
+        width="50px"
+        height="50px"
+        display="flex"
+        alignItems="center"
+        style={{
+          right: '50px',
+          zIndex: 10,
+        }}
+      >
+        <a href="https://youtube.com/@olympics?si=bHK0VWAa7euzhPrD"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
+          >
+            <img 
+              src="/2.png"
+              alt="Youtube icon"
+              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+            />
+          </a>
+      </Box>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+      <Box
+        position="fixed"
+        width="50px"
+        height="50px"
+        display="flex"
+        alignItems="center"
+        style={{
+          right: '100px',
+          zIndex: 10,
+        }}
+      >
+        <a href="https://x.com/olympics"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
+          >
+            <img 
+              src="/3.png"
+              alt="Twitter icon"
+              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+            />
+          </a>
+      </Box>
+
+      <Box
+        position="fixed"
+        width="50px"
+        height="50px"
+        display="flex"
+        alignItems="center"
+        style={{
+          right: '150px',
+          zIndex: 10,
+        }}
+      >
+        <a href="https://www.facebook.com/groups/1599932323566099/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
+          >
+            <img 
+              src="/4.png"
+              alt="Facebook icon"
+              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+            />
+          </a>
+      </Box>
+
+      <Stack
+        direction={'column'}
+        width="100%"
+        height="100%"
+        p={2}
+        spacing={3}
+      >
+        <Stack
+          direction={'column'}
+          spacing={2}
+          flexGrow={1}
+          overflow="auto"
+          maxHeight="100%"
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+          {messages.map((message, index) => (
+            <Box
+              key={index}
+              display="flex"
+              justifyContent={
+                message.role === 'assistant' ? 'flex-start' : 'flex-end'
+              }
+            >
+              <Box
+                bgcolor={
+                  message.role === 'assistant'
+                    ? 'rgb(26, 52, 105)'
+                    : 'rgb(155, 200, 221)'
+                }
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+                color="white"
+                borderRadius={16}
+                p={3}
+              >
+                {message.content}
+              </Box>
+            </Box>
+          ))}
+          <div ref={messagesEndRef} />
+        </Stack>
+        <Stack direction={'row'} spacing={2}>
+          <TextField 
+            label="Send your Message here"
+            variant="filled"
+            fullWidth
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            disabled={isLoading}
+            sx={{
+              backgroundColor: 'rgba(132, 128, 166, 0.8)',
+              '& .MuiInputBase-input': {
+                color: 'white', // Text color
+              },
+              '& .MuiFormLabel-root': {
+                color: 'white', // Label color
+              },
+              '& .MuiFilledInput-underline:before': {
+                borderBottomColor: 'white', // Bottom underline color when not focused
+              },
+              '& .MuiFilledInput-underline:after': {
+                borderBottomColor: 'white', // Bottom underline color when focused
+              }
+            }}
+            InputProps={{
+              style: {
+                color: 'white', // Text color inside the input
+              },
+            }}
+          />
+          <Button 
+            variant="contained" 
+            onClick={sendMessage}
+            disabled={isLoading}
+            sx={{
+              backgroundColor: 'rgb(217, 200, 137)',
+              '&:hover': {
+                backgroundColor: 'rgba(217, 200, 137, 0.8)',
+              },
+            }}
+          >
+            {isLoading ? 'Sending...' : 'Send'}
+          </Button>
+        </Stack>
+      </Stack>
+    </Box>
+  )
 }
