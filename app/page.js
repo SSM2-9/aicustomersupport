@@ -1,9 +1,34 @@
 'use client'
 
-import { Box, Button, Stack, TextField, Typography } from '@mui/material'
+import { Box, Button, Stack, TextField, Tooltip } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
-import WeatherWidget from './components/WeatherWidget';
 
+
+function WeatherWidget() {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://weatherwidget.io/js/widget.min.js';
+    script.async = true;
+    script.id = 'weatherwidget-io-js';
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  return (
+    <a
+      className="weatherwidget-io"
+      href="https://forecast7.com/en/48d862d35/paris/"
+      data-label_1="PARIS"
+      data-label_2="WEATHER"
+      data-theme="original"
+    >
+      PARIS WEATHER
+    </a>
+  );
+}
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -93,15 +118,7 @@ export default function Home() {
         backgroundBlendMode: 'overlay',
       }}
     >
-      <Box
-        position="fixed"
-        top="10px"
-        left="10px"
-        zIndex="10"
-      >
-        <WeatherWidget />
-      </Box>
-      
+
       <Box
           position="fixed"
           width="50px"
@@ -287,6 +304,46 @@ export default function Home() {
           </Button>
         </Stack>
       </Stack>
+
+      <Box
+        position="fixed"
+        top="10px"
+        right="210px"
+        zIndex="10"
+      >
+        <Tooltip
+          title={
+            <Box
+              sx={{
+                width: '300px', // Adjust width as needed
+                borderRadius: 1, // Rounded corners if desired
+                p: 2, // Padding around the widget
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <WeatherWidget />
+            </Box>
+          }
+          placement="top"
+          arrow
+          sx={{ whiteSpace: 'nowrap' }} // Prevents wrapping
+        >
+          <Button
+            variant="contained"
+            sx={{
+              position: 'relative',
+              backgroundColor: "rgb(217, 200, 137)",
+              '&:hover': {
+                backgroundColor: 'rgba(217, 200, 137, 0.8)',
+              },
+              zIndex: 10,
+            }}
+          >
+            Show Weather
+          </Button>
+        </Tooltip>
+      </Box>
     </Box>
   )
 }
