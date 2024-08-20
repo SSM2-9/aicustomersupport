@@ -121,7 +121,7 @@ export default function Home() {
 
       <Box
           position="fixed"
-          width="50px"
+          width="40px"
           height="50px"
           display="flex"
           alignItems="center"
@@ -133,84 +133,84 @@ export default function Home() {
           <a href="https://www.instagram.com/olympicshospitality?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
             target="_blank"
             rel="noopener noreferrer"
-            style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
+            style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
           >
             <img 
               src="/1n.png"
               alt="Instagram icon"
-              style={{ width: '40px', height: '40px', objectFit: 'contain'}}
+              style={{ width: '30px', height: '30px', objectFit: 'contain'}}
             />
           </a>
         </Box>
 
         <Box
         position="fixed"
-        width="50px"
-        height="50px"
+        width="40px"
+          height="50px"
         display="flex"
         alignItems="center"
         style={{
-          right: '50px',
+          right: '35px',
           zIndex: 10,
         }}
       >
         <a href="https://youtube.com/@olympics?si=bHK0VWAa7euzhPrD"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
+            style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
           >
             <img 
               src="/2n.png"
               alt="Youtube icon"
-              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+              style={{ width: '30px', height: '30px', objectFit: 'contain' }}
             />
           </a>
       </Box>
 
       <Box
         position="fixed"
-        width="50px"
+        width="40px"
         height="50px"
         display="flex"
         alignItems="center"
         style={{
-          right: '100px',
+          right: '70px',
           zIndex: 10,
         }}
       >
         <a href="https://x.com/olympics"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
+            style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
           >
             <img 
               src="/3n.png"
               alt="Twitter icon"
-              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+              style={{ width: '30px', height: '30px', objectFit: 'contain', filter: 'brightness()' }}
             />
           </a>
       </Box>
 
       <Box
         position="fixed"
-        width="50px"
+        width="40px"
         height="50px"
         display="flex"
         alignItems="center"
         style={{
-          right: '150px',
+          right: '105px',
           zIndex: 10,
         }}
       >
         <a href="https://www.facebook.com/groups/1599932323566099/"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ display: 'block', width: '40px', height: '40px', textDecoration: 'none' }}
+            style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
           >
             <img 
               src="/4n.png"
               alt="Facebook icon"
-              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+              style={{ width: '30px', height: '30px', objectFit: 'contain' }}
             />
           </a>
       </Box>
@@ -241,7 +241,7 @@ export default function Home() {
               bgcolor={
                 message.role === 'assistant'
                   ? 'rgb(5, 165, 82)' 
-                  : 'rgb(155, 200, 221)'
+                  : 'rgb(0, 130, 198)'
               }
               className="poppins-regular"
               color="white"
@@ -294,9 +294,9 @@ export default function Home() {
             disabled={isLoading}
             className="poppins-medium"
             sx={{
-              backgroundColor: 'rgb(217, 200, 137)',
+              backgroundColor: 'rgb(252, 176, 47)',
               '&:hover': {
-                backgroundColor: 'rgba(217, 200, 137, 0.8)',
+                backgroundColor: 'rgba(252, 176, 47, 0.5)',
               },
             }}
           >
@@ -308,16 +308,16 @@ export default function Home() {
       <Box
         position="fixed"
         top="10px"
-        right="210px"
+        right="180px"
         zIndex="10"
       >
         <Tooltip
           title={
             <Box
               sx={{
-                width: '300px', // Adjust width as needed
+                width: '300px',// Adjust width as needed
                 borderRadius: 1, // Rounded corners if desired
-                p: 2, // Padding around the widget
+                p: 3, // Padding around the widget
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
@@ -327,15 +327,15 @@ export default function Home() {
           }
           placement="top"
           arrow
-          sx={{ whiteSpace: 'nowrap' }} // Prevents wrapping
+           // Prevents wrapping
         >
           <Button
             variant="contained"
             sx={{
               position: 'relative',
-              backgroundColor: "rgb(217, 200, 137)",
+              backgroundColor: "rgb(252, 176, 47)",
               '&:hover': {
-                backgroundColor: 'rgba(217, 200, 137, 0.8)',
+                backgroundColor: 'rgba(252, 176, 47, 0.5)',
               },
               zIndex: 10,
             }}
