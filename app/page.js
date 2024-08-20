@@ -3,7 +3,6 @@
 import { Box, Button, Stack, TextField, Tooltip } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
 
-
 function WeatherWidget() {
   useEffect(() => {
     const script = document.createElement('script');
@@ -118,35 +117,35 @@ export default function Home() {
         backgroundBlendMode: 'overlay',
       }}
     >
-
+      {/* Social Media Icons */}
       <Box
-          position="fixed"
-          width="40px"
-          height="50px"
-          display="flex"
-          alignItems="center"
-          style={{
-            right: '0px',
-            zIndex: 10,
-          }}
-        >
-          <a href="https://www.instagram.com/olympicshospitality?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
-          >
-            <img 
-              src="/1n.png"
-              alt="Instagram icon"
-              style={{ width: '30px', height: '30px', objectFit: 'contain'}}
-            />
-          </a>
-        </Box>
-
-        <Box
         position="fixed"
         width="40px"
-          height="50px"
+        height="50px"
+        display="flex"
+        alignItems="center"
+        style={{
+          right: '0px',
+          zIndex: 10,
+        }}
+      >
+        <a href="https://www.instagram.com/olympicshospitality?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
+        >
+          <img 
+            src="/1n.png"
+            alt="Instagram icon"
+            style={{ width: '30px', height: '30px', objectFit: 'contain'}}
+          />
+        </a>
+      </Box>
+
+      <Box
+        position="fixed"
+        width="40px"
+        height="50px"
         display="flex"
         alignItems="center"
         style={{
@@ -254,96 +253,39 @@ export default function Home() {
           ))}
           <div ref={messagesEndRef} />
         </Stack>
-        <Stack direction={'row'} spacing={2}>
-        <TextField 
-        label="Send your Message here"
-        variant="filled"
-        fullWidth
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyPress={handleKeyPress}
-        disabled={isLoading}
-        sx={{
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          '& .MuiInputBase-input': {
-            color: 'rgb(24, 24, 51)', // Text color
-            fontFamily: 'Poppins, sans-serif', // Font family
-          },
-          '& .MuiFormLabel-root': {
-            color: 'rgb(24, 24, 51)', // Label color
-            fontFamily: 'Poppins, sans-serif', // Font family
-          },
-          '& .MuiFilledInput-underline:before': {
-            borderBottomColor: 'rgb(24, 24, 51)', // Bottom underline color when not focused
-          },
-          '& .MuiFilledInput-underline:after': {
-            borderBottomColor: 'rgb(24, 24, 51)', // Bottom underline color when focused
-          }
-        }}
-        InputProps={{
-          style: {
-            color: 'rgb(24, 24, 51)', // Text color inside the input
-            fontFamily: 'Poppins, sans-serif', // Font family
-          },
-        }}
-      />
 
+        <Stack direction={'row'} spacing={2}>
+          <TextField 
+            label="Send your Message here"
+            variant="filled"
+            fullWidth
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyPress}
+            multiline
+            rows={2}
+          />
+          <Tooltip title="Check weather">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {}}
+            >
+              Weather
+            </Button>
+          </Tooltip>
           <Button 
-            variant="contained" 
+            variant="contained"
+            color="secondary"
             onClick={sendMessage}
             disabled={isLoading}
-            className="poppins-medium"
-            sx={{
-              backgroundColor: 'rgb(252, 176, 47)',
-              '&:hover': {
-                backgroundColor: 'rgba(252, 176, 47, 0.5)',
-              },
-            }}
           >
             {isLoading ? 'Sending...' : 'Send'}
           </Button>
         </Stack>
       </Stack>
 
-      <Box
-        position="fixed"
-        top="10px"
-        right="180px"
-        zIndex="10"
-      >
-        <Tooltip
-          title={
-            <Box
-              sx={{
-                width: '300px',// Adjust width as needed
-                borderRadius: 1, // Rounded corners if desired
-                p: 3, // Padding around the widget
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <WeatherWidget />
-            </Box>
-          }
-          placement="top"
-          arrow
-           // Prevents wrapping
-        >
-          <Button
-            variant="contained"
-            sx={{
-              position: 'relative',
-              backgroundColor: "rgb(252, 176, 47)",
-              '&:hover': {
-                backgroundColor: 'rgba(252, 176, 47, 0.5)',
-              },
-              zIndex: 10,
-            }}
-          >
-            Show Weather
-          </Button>
-        </Tooltip>
-      </Box>
+      <WeatherWidget />
     </Box>
   )
 }
