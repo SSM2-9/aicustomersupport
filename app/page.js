@@ -3,7 +3,6 @@
 import { Box, Button, Stack, TextField, Tooltip } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
 
-
 function WeatherWidget() {
   useEffect(() => {
     const script = document.createElement('script');
@@ -36,72 +35,76 @@ export default function Home() {
       role: 'assistant',
       content: "Hi! I'm the Paris Olympics 2024 customer support. How can I help you today?",
     },
-  ])
-  const [message, setMessage] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const messagesEndRef = useRef(null)
+  ]);
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
 
   const sendMessage = async () => {
     if (!message.trim() || isLoading) return;
-    setIsLoading(true)
-    setMessage('')  // Clear the input field
-    setMessages((messages) => [
+    setIsLoading(true);
+    setMessage('');  // Clear the input field
+  
+    // Add the user's message and a placeholder for the assistant's response
+    const newMessages = [
       ...messages,
-      { role: 'user', content: message },  // Add the user's message to the chat
-      { role: 'assistant', content: '' },  // Add a placeholder for the assistant's response
-    ])
+      { role: 'user', content: message },
+      { role: 'assistant', content: '' },
+    ];
+    setMessages(newMessages);
   
     try {
-      // Send the message to the server
+      // Send the entire messages array to the server
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify([...messages, { role: 'user', content: message }]),
-      })
-      const reader = response.body.getReader()  // Get a reader to read the response body
-      const decoder = new TextDecoder()  // Create a decoder to decode the response text
+        body: JSON.stringify(newMessages),
+      });
   
-      let result = ''
-      // Function to process the text from the response
+      // Handle streaming response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+  
+      let result = '';
       const processText = async ({ done, value }) => {
         if (done) {
-          setIsLoading(false)
-          return result
+          setIsLoading(false);
+          return result;
         }
-        const text = decoder.decode(value || new Uint8Array(), { stream: true })  // Decode the text
+        const text = decoder.decode(value || new Uint8Array(), { stream: true });
         setMessages((messages) => {
-          let lastMessage = messages[messages.length - 1]  // Get the last message (assistant's placeholder)
-          let otherMessages = messages.slice(0, messages.length - 1)  // Get all other messages
+          let lastMessage = messages[messages.length - 1];
+          let otherMessages = messages.slice(0, messages.length - 1);
           return [
             ...otherMessages,
-            { ...lastMessage, content: lastMessage.content + text },  // Append the decoded text to the assistant's message
-          ]
-        })
-        return reader.read().then(processText)  // Continue reading the next chunk of the response
-      }
-      await reader.read().then(processText)
+            { ...lastMessage, content: lastMessage.content + text },
+          ];
+        });
+        return reader.read().then(processText);
+      };
+      await reader.read().then(processText);
     } catch (error) {
-      console.error("Error sending message:", error)
-      setIsLoading(false)
+      console.error('Error sending message:', error);
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault()
-      sendMessage()
+      event.preventDefault();
+      sendMessage();
     }
-  }
+  };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <Box
@@ -120,33 +123,33 @@ export default function Home() {
     >
 
       <Box
-          position="fixed"
-          width="40px"
-          height="50px"
-          display="flex"
-          alignItems="center"
-          style={{
-            right: '0px',
-            zIndex: 10,
-          }}
-        >
-          <a href="https://www.instagram.com/olympicshospitality?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
-          >
-            <img 
-              src="/1n.png"
-              alt="Instagram icon"
-              style={{ width: '30px', height: '30px', objectFit: 'contain'}}
-            />
-          </a>
-        </Box>
-
-        <Box
         position="fixed"
         width="40px"
-          height="50px"
+        height="50px"
+        display="flex"
+        alignItems="center"
+        style={{
+          right: '0px',
+          zIndex: 10,
+        }}
+      >
+        <a href="https://www.instagram.com/olympicshospitality?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
+        >
+          <img 
+            src="/1n.png"
+            alt="Instagram icon"
+            style={{ width: '30px', height: '30px', objectFit: 'contain' }}
+          />
+        </a>
+      </Box>
+
+      <Box
+        position="fixed"
+        width="40px"
+        height="50px"
         display="flex"
         alignItems="center"
         style={{
@@ -155,16 +158,16 @@ export default function Home() {
         }}
       >
         <a href="https://youtube.com/@olympics?si=bHK0VWAa7euzhPrD"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
-          >
-            <img 
-              src="/2n.png"
-              alt="Youtube icon"
-              style={{ width: '30px', height: '30px', objectFit: 'contain' }}
-            />
-          </a>
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
+        >
+          <img 
+            src="/2n.png"
+            alt="Youtube icon"
+            style={{ width: '30px', height: '30px', objectFit: 'contain' }}
+          />
+        </a>
       </Box>
 
       <Box
@@ -179,16 +182,16 @@ export default function Home() {
         }}
       >
         <a href="https://x.com/olympics"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
-          >
-            <img 
-              src="/3n.png"
-              alt="Twitter icon"
-              style={{ width: '30px', height: '30px', objectFit: 'contain', filter: 'brightness()' }}
-            />
-          </a>
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
+        >
+          <img 
+            src="/3n.png"
+            alt="Twitter icon"
+            style={{ width: '30px', height: '30px', objectFit: 'contain', filter: 'brightness()' }}
+          />
+        </a>
       </Box>
 
       <Box
@@ -203,16 +206,16 @@ export default function Home() {
         }}
       >
         <a href="https://www.facebook.com/groups/1599932323566099/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
-          >
-            <img 
-              src="/4n.png"
-              alt="Facebook icon"
-              style={{ width: '30px', height: '30px', objectFit: 'contain' }}
-            />
-          </a>
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
+        >
+          <img 
+            src="/4n.png"
+            alt="Facebook icon"
+            style={{ width: '30px', height: '30px', objectFit: 'contain' }}
+          />
+        </a>
       </Box>
 
       <Stack
@@ -230,120 +233,70 @@ export default function Home() {
           maxHeight="100%"
         >
           {messages.map((message, index) => (
-          <Box
-            key={index}
-            display="flex"
-            justifyContent={
-              message.role === 'assistant' ? 'flex-start' : 'flex-end'
-            }
-          >
             <Box
-              bgcolor={
-                message.role === 'assistant'
-                  ? 'rgb(5, 165, 82)' 
-                  : 'rgb(0, 130, 198)'
+              key={index}
+              display="flex"
+              justifyContent={
+                message.role === 'assistant' ? 'flex-start' : 'flex-end'
               }
-              className="poppins-regular"
-              color="white"
-              borderRadius={16}
-              p={3}
             >
-              {message.content}
+              <Box
+                bgcolor={
+                  message.role === 'assistant'
+                    ? 'rgb(5, 165, 82)' 
+                    : 'rgb(0, 130, 198)'
+                }
+                className="poppins-regular"
+                color="white"
+                borderRadius={16}
+                p={3}
+              >
+                {message.content}
+              </Box>
             </Box>
-          </Box>
           ))}
           <div ref={messagesEndRef} />
         </Stack>
         <Stack direction={'row'} spacing={2}>
-        <TextField 
-        label="Send your Message here"
-        variant="filled"
-        fullWidth
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyPress={handleKeyPress}
-        disabled={isLoading}
-        sx={{
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          '& .MuiInputBase-input': {
-            color: 'rgb(24, 24, 51)', // Text color
-            fontFamily: 'Poppins, sans-serif', // Font family
-          },
-          '& .MuiFormLabel-root': {
-            color: 'rgb(24, 24, 51)', // Label color
-            fontFamily: 'Poppins, sans-serif', // Font family
-          },
-          '& .MuiFilledInput-underline:before': {
-            borderBottomColor: 'rgb(24, 24, 51)', // Bottom underline color when not focused
-          },
-          '& .MuiFilledInput-underline:after': {
-            borderBottomColor: 'rgb(24, 24, 51)', // Bottom underline color when focused
-          }
-        }}
-        InputProps={{
-          style: {
-            color: 'rgb(24, 24, 51)', // Text color inside the input
-            fontFamily: 'Poppins, sans-serif', // Font family
-          },
-        }}
-      />
-
-          <Button 
-            variant="contained" 
-            onClick={sendMessage}
+          <TextField 
+            label="Send your Message here"
+            variant="filled"
+            fullWidth
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
             disabled={isLoading}
-            className="poppins-medium"
             sx={{
-              backgroundColor: 'rgb(252, 176, 47)',
-              '&:hover': {
-                backgroundColor: 'rgba(252, 176, 47, 0.5)',
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              '& .MuiInputBase-input': {
+                color: 'rgb(24, 24, 51)', // Text color
+                fontFamily: 'Poppins, sans-serif', // Font family
+              },
+              '& .MuiFormLabel-root': {
+                color: 'rgb(24, 24, 51)', // Label color
+              },
+              '& .MuiInputBase-root': {
+                borderRadius: 2,
               },
             }}
-          >
-            {isLoading ? 'Sending...' : 'Send'}
-          </Button>
-        </Stack>
-      </Stack>
-
-      <Box
-        position="fixed"
-        top="10px"
-        right="180px"
-        zIndex="10"
-      >
-        <Tooltip
-          title={
-            <Box
+          />
+          <Tooltip title="Send" arrow>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={sendMessage}
+              disabled={isLoading}
               sx={{
-                width: '300px',// Adjust width as needed
-                borderRadius: 1, // Rounded corners if desired
-                p: 3, // Padding around the widget
-                alignItems: 'center',
-                justifyContent: 'center',
+                height: '56px',
+                borderRadius: 2,
               }}
             >
-              <WeatherWidget />
-            </Box>
-          }
-          placement="top"
-          arrow
-           // Prevents wrapping
-        >
-          <Button
-            variant="contained"
-            sx={{
-              position: 'relative',
-              backgroundColor: "rgb(252, 176, 47)",
-              '&:hover': {
-                backgroundColor: 'rgba(252, 176, 47, 0.5)',
-              },
-              zIndex: 10,
-            }}
-          >
-            Show Weather
-          </Button>
-        </Tooltip>
-      </Box>
+              {isLoading ? 'Sending...' : 'Send'}
+            </Button>
+          </Tooltip>
+        </Stack>
+      </Stack>
+      <WeatherWidget />
     </Box>
   )
 }
