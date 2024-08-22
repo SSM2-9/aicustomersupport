@@ -2,31 +2,36 @@ import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req) {
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ 
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (!apiKey) {
+    console.error("API Key is missing");
+    return NextResponse.json({ error: "API Key is missing" }, { status: 500 });
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
-    systemInstruction: "Hi! I'm the Paris Olympics 2024 customer support. How can I help you today?",
+    systemInstruction: "You are a chatbot designed to help people with anything regarding the Paris Olympics 2024"
   });
 
   try {
-    // Parse the request body
     const data = await req.json();
 
     // Construct the conversation history
-    const conversationHistory = data.map(message => `${message.role}: ${message.content}`).join("\n\n");
+    const conversationHistory = data.map(message => message.content).join("\n\n");
 
-    // Combine the system instruction with the conversation history
     const prompt = `${model.systemInstruction}\n\nHere's what has been discussed so far:\n${conversationHistory}\n`;
 
-    // Generate response using the model
-    const result = await model.generateContentStream({ prompt });
+    // Generate response using the AI model
+    const result = await model.generateContent(prompt);
 
-    // Read the stream response
-    const text = await result.text();
+    // Extract the relevant text
+    const text = typeof result.response.text === 'function' ? await result.response.text() : result.response.text || "No content returned";
 
-    // Return the assistant's response
-    return new Response(text, { status: 200, headers: { 'Content-Type': 'application/json' } });
-
+    // Return the assistant's response as a string
+    return NextResponse.json({ response: text }, { status: 200 });
   } catch (error) {
     console.error("Error in API Call:", error.message);
     console.error("Full Error Details:", error);

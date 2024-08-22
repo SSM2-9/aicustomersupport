@@ -1,40 +1,12 @@
-'use client'
+'use client';
 
-import { Box, Button, Stack, TextField, Tooltip } from '@mui/material'
-import { useState, useEffect, useRef } from 'react'
-
-function WeatherWidget() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://weatherwidget.io/js/widget.min.js';
-    script.async = true;
-    script.id = 'weatherwidget-io-js';
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  return (
-    <a
-      className="weatherwidget-io"
-      href="https://forecast7.com/en/48d862d35/paris/"
-      data-label_1="PARIS"
-      data-label_2="WEATHER"
-      data-theme="original"
-    >
-      PARIS WEATHER
-    </a>
-  );
-}
+import { Box, Button, Stack, TextField, Tooltip } from '@mui/material';
+import WeatherWidget from './components/WeatherWidget';
+import { useEffect, useState, useRef } from 'react';
 
 export default function Home() {
   const [messages, setMessages] = useState([
-    {
-      role: 'assistant',
-      content: "Hi! I'm the Paris Olympics 2024 customer support. How can I help you today?",
-    },
+    { role: 'assistant', content: "Hi! I'm the Paris Olympics 2024 customer support. How can I help you today?" },
   ]);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -43,9 +15,8 @@ export default function Home() {
   const sendMessage = async () => {
     if (!message.trim() || isLoading) return;
     setIsLoading(true);
-    setMessage('');  // Clear the input field
+    setMessage('');
   
-    // Add the user's message and a placeholder for the assistant's response
     const newMessages = [
       ...messages,
       { role: 'user', content: message },
@@ -54,8 +25,7 @@ export default function Home() {
     setMessages(newMessages);
   
     try {
-      // Send the entire messages array to the server
-      const response = await fetch('/api/chat', {
+      const response = await fetch("/api/chat", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,28 +33,25 @@ export default function Home() {
         body: JSON.stringify(newMessages),
       });
   
-      // Handle streaming response
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
   
-      let result = '';
-      const processText = async ({ done, value }) => {
-        if (done) {
-          setIsLoading(false);
-          return result;
-        }
-        const text = decoder.decode(value || new Uint8Array(), { stream: true });
-        setMessages((messages) => {
-          let lastMessage = messages[messages.length - 1];
-          let otherMessages = messages.slice(0, messages.length - 1);
-          return [
-            ...otherMessages,
-            { ...lastMessage, content: lastMessage.content + text },
-          ];
-        });
-        return reader.read().then(processText);
-      };
-      await reader.read().then(processText);
+      const data = await response.json();
+      console.log('Response Data:', data); // Log the data to verify its content
+  
+      const text = data.response || "No content returned";
+  
+      setMessages((messages) => {
+        let lastMessage = messages[messages.length - 1];
+        let otherMessages = messages.slice(0, messages.length - 1);
+        return [
+          ...otherMessages,
+          { ...lastMessage, content: text },
+        ];
+      });
+  
+      setIsLoading(false);
     } catch (error) {
       console.error('Error sending message:', error);
       setIsLoading(false);
@@ -92,18 +59,13 @@ export default function Home() {
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
+    if (event.key === 'Enter' && !isLoading) {
       sendMessage();
     }
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   return (
@@ -121,7 +83,6 @@ export default function Home() {
         backgroundBlendMode: 'overlay',
       }}
     >
-
       <Box
         position="fixed"
         width="40px"
@@ -189,7 +150,7 @@ export default function Home() {
           <img 
             src="/3n.png"
             alt="Twitter icon"
-            style={{ width: '30px', height: '30px', objectFit: 'contain', filter: 'brightness()' }}
+            style={{ width: '30px', height: '30px', objectFit: 'contain' }}
           />
         </a>
       </Box>
@@ -296,7 +257,8 @@ export default function Home() {
           </Tooltip>
         </Stack>
       </Stack>
+      {/* Ensure WeatherWidget is properly defined or imported */}
       <WeatherWidget />
     </Box>
-  )
+  );
 }

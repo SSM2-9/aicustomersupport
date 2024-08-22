@@ -6,6 +6,12 @@ const WeatherWidget = () => {
     const script = document.createElement('script');
     script.src = 'https://weatherwidget.io/js/widget.min.js';
     script.async = true;
+    script.onload = () => {
+      console.log('Weather widget script loaded successfully.');
+    };
+    script.onerror = () => {
+      console.error('Failed to load the weather widget script.');
+    };
     document.body.appendChild(script);
   }, []);
 
