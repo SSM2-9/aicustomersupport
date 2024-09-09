@@ -13,7 +13,7 @@ export async function POST(req) {
 
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
-    systemInstruction: "You are a chatbot designed to help people with anything regarding the Paris Olympics 2024"
+    systemInstruction: "You are a chatbot designed to help people with making delicious recipes"
   });
 
   try {

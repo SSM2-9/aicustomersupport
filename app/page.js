@@ -1,264 +1,157 @@
 'use client';
 
-import { Box, Button, Stack, TextField, Tooltip } from '@mui/material';
-import WeatherWidget from './components/WeatherWidget';
-import { useEffect, useState, useRef } from 'react';
+import { ClerkProvider, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import { Box, Typography, Button, AppBar, Toolbar } from "@mui/material";
+import Link from 'next/link';
+import React from 'react';
+import Slider from 'react-slick';
 
 export default function Home() {
-  const [messages, setMessages] = useState([
-    { role: 'assistant', content: "Hi! I'm the Paris Olympics 2024 customer support. How can I help you today?" },
-  ]);
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef(null);
-
-  const sendMessage = async () => {
-    if (!message.trim() || isLoading) return;
-    setIsLoading(true);
-    setMessage('');
+  const router = useRouter();
   
-    const newMessages = [
-      ...messages,
-      { role: 'user', content: message },
-      { role: 'assistant', content: '' },
-    ];
-    setMessages(newMessages);
-  
-    try {
-      const response = await fetch("/api/chat", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newMessages),
+  const handleClick_1 = (e) => {
+    e.preventDefault();
+    const target = document.getElementById('join');
+    if (target) {
+      window.scrollTo({
+        top: target.offsetTop,
+        behavior: 'smooth',
       });
-  
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
-      const data = await response.json();
-      console.log('Response Data:', data); // Log the data to verify its content
-  
-      const text = data.response || "No content returned";
-  
-      setMessages((messages) => {
-        let lastMessage = messages[messages.length - 1];
-        let otherMessages = messages.slice(0, messages.length - 1);
-        return [
-          ...otherMessages,
-          { ...lastMessage, content: text },
-        ];
-      });
-  
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setIsLoading(false);
     }
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && !isLoading) {
-      sendMessage();
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 4000,
+  };
+  
+  const imageUrls = [
+    '/1.mp4',
+    '/2.mp4',
+    '/3.mp4', 
+  ];
+
+  const handleClick_2 = (e) => {
+    e.preventDefault();
+    const target = document.getElementById('learn-more');
+    if (target) {
+      window.scrollTo({
+        top: target.offsetTop,
+        behavior: 'smooth',
+      });
     }
   };
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
 
   return (
-    <Box
-      width="100vw"
-      height="100vh"
-      display="flex"
-      flexDirection="column"
-      sx={{
-        backgroundImage: 'url(/paris_olympics.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-        backgroundBlendMode: 'overlay',
-      }}
-    >
-      <Box
-        position="fixed"
-        width="40px"
-        height="50px"
-        display="flex"
-        alignItems="center"
-        style={{
-          right: '0px',
-          zIndex: 10,
-        }}
-      >
-        <a href="https://www.instagram.com/olympicshospitality?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
-        >
-          <img 
-            src="/1n.png"
-            alt="Instagram icon"
-            style={{ width: '30px', height: '30px', objectFit: 'contain' }}
-          />
-        </a>
-      </Box>
-
-      <Box
-        position="fixed"
-        width="40px"
-        height="50px"
-        display="flex"
-        alignItems="center"
-        style={{
-          right: '35px',
-          zIndex: 10,
-        }}
-      >
-        <a href="https://youtube.com/@olympics?si=bHK0VWAa7euzhPrD"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
-        >
-          <img 
-            src="/2n.png"
-            alt="Youtube icon"
-            style={{ width: '30px', height: '30px', objectFit: 'contain' }}
-          />
-        </a>
-      </Box>
-
-      <Box
-        position="fixed"
-        width="40px"
-        height="50px"
-        display="flex"
-        alignItems="center"
-        style={{
-          right: '70px',
-          zIndex: 10,
-        }}
-      >
-        <a href="https://x.com/olympics"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
-        >
-          <img 
-            src="/3n.png"
-            alt="Twitter icon"
-            style={{ width: '30px', height: '30px', objectFit: 'contain' }}
-          />
-        </a>
-      </Box>
-
-      <Box
-        position="fixed"
-        width="40px"
-        height="50px"
-        display="flex"
-        alignItems="center"
-        style={{
-          right: '105px',
-          zIndex: 10,
-        }}
-      >
-        <a href="https://www.facebook.com/groups/1599932323566099/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ display: 'block', width: '30px', height: '30px', textDecoration: 'none' }}
-        >
-          <img 
-            src="/4n.png"
-            alt="Facebook icon"
-            style={{ width: '30px', height: '30px', objectFit: 'contain' }}
-          />
-        </a>
-      </Box>
-
-      <Stack
-        direction={'column'}
-        width="100%"
-        height="100%"
-        p={2}
-        spacing={3}
-      >
-        <Stack
-          direction={'column'}
-          spacing={2}
-          flexGrow={1}
-          overflow="auto"
-          maxHeight="100%"
-        >
-          {messages.map((message, index) => (
-            <Box
-              key={index}
-              display="flex"
-              justifyContent={
-                message.role === 'assistant' ? 'flex-start' : 'flex-end'
-              }
-            >
-              <Box
-                bgcolor={
-                  message.role === 'assistant'
-                    ? 'rgb(5, 165, 82)' 
-                    : 'rgb(0, 130, 198)'
-                }
-                className="poppins-regular"
-                color="white"
-                borderRadius={16}
-                p={3}
-              >
-                {message.content}
-              </Box>
-            </Box>
-          ))}
-          <div ref={messagesEndRef} />
-        </Stack>
-        <Stack direction={'row'} spacing={2}>
-          <TextField 
-            label="Send your Message here"
-            variant="filled"
-            fullWidth
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled={isLoading}
-            sx={{
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              '& .MuiInputBase-input': {
-                color: 'rgb(24, 24, 51)', // Text color
-                fontFamily: 'Poppins, sans-serif', // Font family
-              },
-              '& .MuiFormLabel-root': {
-                color: 'rgb(24, 24, 51)', // Label color
-              },
-              '& .MuiInputBase-root': {
-                borderRadius: 2,
-              },
-            }}
-          />
-          <Tooltip title="Send" arrow>
-            <Button
+    <>
+      <AppBar position="static" sx={{ backgroundColor: '#8C5543' }}>
+        <Toolbar>
+        <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Typography variant="h5" sx={{ flexGrow: 1, color: '#F4EFEA', fontFamily: 'Playfair Display, serif',}}>
+            FoodFusion
+          </Typography>
+        </Link>
+          <Typography variant="h5" style={{ flexGrow: 1 }} className="bangers" sx={{ fontFamily: 'Bangers, sans-serif' }}>
+          
+          </Typography>
+          <SignedOut>
+            <Button 
               variant="contained"
-              color="primary"
-              onClick={sendMessage}
-              disabled={isLoading}
+              onClick={() => router.push('/sign-in')}
               sx={{
-                height: '56px',
-                borderRadius: 2,
-              }}
-            >
-              {isLoading ? 'Sending...' : 'Send'}
+                marginRight: 2,
+                backgroundColor: 'rgb(255, 255, 255)',
+                '&:hover': {
+                  backgroundColor: '#F4EFEA',
+                  transform: 'scale(1.05)',
+                },
+                color: '#8C5543',
+                fontFamily: 'Raleway, sans-serif',
+                fontWeight: 700,
+              }}>
+              Login
             </Button>
-          </Tooltip>
-        </Stack>
-      </Stack>
-      {/* Ensure WeatherWidget is properly defined or imported */}
-      <WeatherWidget />
-    </Box>
+            <Button 
+              variant="contained"
+              onClick={() => router.push('/sign-up')}
+              sx={{
+                marginRight: 2,
+                backgroundColor: 'rgb(255, 255, 255)',
+                '&:hover': {
+                  backgroundColor: '#F4EFEA',
+                  transform: 'scale(1.05)',
+                },
+                color: '#8C5543',
+                fontFamily: 'Raleway, sans-serif',
+                fontWeight: 700,
+              }}>
+              Sign Up
+            </Button>
+          </SignedOut>
+
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+        </Toolbar>
+      </AppBar>
+      
+      <Box sx={{ textAlign: 'center', position: 'relative', overflow: 'hidden', height: 780 }}>
+      <Slider {...settings} style={{ width: '100%', height: '100%' }}>
+        {imageUrls.map((url, index) => (
+          <div key={index}>
+            <img 
+              src={url} 
+              alt={`Slide ${index}`} 
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                opacity: '0.6',
+              }} 
+            />
+          </div>
+        ))}
+      </Slider>
+      <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" paddingBottom={10} sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}>
+        <Typography variant="h2" component="h1" gutterBottom sx={{ fontFamily: 'Playfair Display, sans-serif' }}>
+          Welcome to FoodFusion
+        </Typography>
+        <Typography variant="h5" component="h2" gutterBottom sx={{ fontFamily: 'Montserrat, serif', fontWeight: 500 }}>
+          🗂️ Manage your pantry effortlessly & let AI generate amazing recipes for you with FoodFusion! 🍲
+        </Typography>
+        <SignedOut>
+          <Button 
+            variant="contained"
+            onClick={() => router.push('/sign-up')}
+            sx={{
+              backgroundColor:'#8C5543', 
+              color:'#F4EFEA', 
+              fontFamily: 'Raleway, serif',
+              '&:hover': {backgroundColor: '#B6956F', transform: 'scale(1.05)'}}}>
+                Get Started for FREE!
+              </Button>
+          </SignedOut>
+
+          <SignedIn>
+            <Link href="/home" passHref>
+              <Button 
+                variant="contained"
+                sx={{
+                  backgroundColor:'#8C5543', 
+                  color:'#F4EFEA', 
+                  fontFamily: 'Raleway, serif',
+                  '&:hover': {backgroundColor: '#B6956F', transform: 'scale(1.05)'}}}>Home
+              </Button>
+            </Link>
+          </SignedIn>
+        </Box>
+      </Box>
+    </>
   );
 }
