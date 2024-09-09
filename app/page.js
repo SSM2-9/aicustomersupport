@@ -63,11 +63,9 @@ export default function Home() {
   }, [messages]);
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      // Handle what happens when the Enter key is pressed
-      event.preventDefault();
-      console.log("Message sent: ", message);
-      // Optionally, add your logic here to send the message
+    if (event.key === 'Enter' && !isLoading) {
+      event.preventDefault(); 
+      sendMessage(); // Send the message on Enter key press
     }
   };
 
