@@ -27,6 +27,8 @@ export async function POST(req) {
     // Generate response using the AI model
     const result = await model.generateContent(prompt);
 
+    console.log("Model Response:", result);  // Log the full result for debugging
+
     // Extract the relevant text
     const text = result?.response?.text || "No content returned";
 
