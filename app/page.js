@@ -62,6 +62,15 @@ export default function Home() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      // Handle what happens when the Enter key is pressed
+      event.preventDefault();
+      console.log("Message sent: ", message);
+      // Optionally, add your logic here to send the message
+    }
+  };
+
   return (
     <Box
       width="100vw"
