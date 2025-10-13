@@ -13,50 +13,41 @@ export default function Home() {
   const messagesEndRef = useRef(null);
 
   const sendMessage = async () => {
-    if (!message.trim() || isLoading) return;
-    setIsLoading(true);
-    setMessage('');
-  
-    const newMessages = [
-      ...messages,
-      { role: 'user', content: message },
-      { role: 'assistant', content: '' },
-    ];
-    setMessages(newMessages);
-  
-    try {
-      const response = await fetch("/api/chat", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newMessages),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
-      const data = await response.json();
-      console.log('Response Data:', data); // Log the data to verify its content
-  
-      const text = data.response || "No content returned";
-  
-      setMessages((messages) => {
-        let lastMessage = messages[messages.length - 1];
-        let otherMessages = messages.slice(0, messages.length - 1);
-        return [
-          ...otherMessages,
-          { ...lastMessage, content: text },
-        ];
-      });
-  
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setIsLoading(false);
-    }
-  };
+  if (!message.trim() || isLoading) return;
+  setIsLoading(true);
+
+  const userMessage = message;
+  setMessage('');
+
+  // Add user message to frontend chat immediately
+  setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+
+  try {
+    // Send only the user message to backend
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify([{ content: userMessage }]),
+    });
+
+    if (!response.ok) throw new Error('Network response was not ok');
+
+    const data = await response.json();
+    console.log('Response Data:', data);
+
+    // Append assistant response
+    setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+
+  } catch (error) {
+    console.error('Error sending message:', error);
+    setMessages(prev => [
+      ...prev,
+      { role: 'assistant', content: 'Sorry, there was an error processing your message.' },
+    ]);
+  } finally {
+    setIsLoading(false);
+  }
+};
 4
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
