@@ -19,18 +19,37 @@ export async function POST(req) {
   try {
     const data = await req.json();
 
-    // Construct the conversation history
-    const conversationHistory = data.map(message => message.content).join("\n\n");
+    console.log("Raw request data from client:", JSON.stringify(data, null, 2));
 
-    const prompt = `${model.systemInstruction}\n\nHere's what has been discussed so far:\n${conversationHistory}\n`;
+    // Validate incoming messages
+    if (!Array.isArray(data)) {
+      console.error("Expected an array of messages. Got:", data);
+      return NextResponse.json({ error: "Invalid request body. Must be an array of messages." }, { status: 400 });
+    }
 
-    // Generate response using the AI model
-    const result = await model.generateContent(prompt);
+    // Ensure each message has a 'content' property
+    const invalidMessage = data.find(msg => typeof msg.content !== "string");
+    if (invalidMessage) {
+      console.error("Message missing 'content' field:", invalidMessage);
+      return NextResponse.json({ error: "Each message must have a 'content' string property." }, { status: 400 });
+    }
 
-    // Extract the relevant text
-    const text = typeof result.response.text === 'function' ? await result.response.text() : result.response.text || "No content returned";
+    const conversationHistory = data.map(m => m.content).join("\n\n");
 
-    // Return the assistant's response as a string
+    const prompt = `You are a chatbot designed to help people with anything regarding the Paris Olympics 2024.\n\nHere's what has been discussed so far:\n${conversationHistory}\n`;
+
+    console.log("Generated prompt for Gemini:", prompt);
+
+    const result = await model.generateContent({
+      prompt,
+      temperature: 0.7,
+      maxOutputTokens: 500
+    });
+
+    console.log("Full result from Gemini:", JSON.stringify(result, null, 2));
+
+    const text = result.output?.[0]?.content?.[0]?.text || "No content returned";
+
     return NextResponse.json({ response: text }, { status: 200 });
   } catch (error) {
     console.error("Error in API Call:", error.message);
