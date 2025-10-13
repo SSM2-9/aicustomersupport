@@ -1,55 +1,40 @@
 import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req) {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    console.error("GEMINI_API_KEY is missing");
+    console.error("API Key is missing");
     return NextResponse.json({ error: "API Key is missing" }, { status: 500 });
   }
 
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    systemInstruction: "You are a chatbot designed to help people with anything regarding the Paris Olympics 2024"
+  });
+
   try {
-    // Parse incoming messages
-    const messages = await req.json();
-    console.log("Received messages:", JSON.stringify(messages, null, 2));
+    const data = await req.json();
 
-    if (!Array.isArray(messages) || messages.some(m => typeof m.content !== "string")) {
-      return NextResponse.json(
-        { error: "Invalid request body. Must be an array of objects with a 'content' string." },
-        { status: 400 }
-      );
-    }
+    // Construct the conversation history
+    const conversationHistory = data.map(message => message.content).join("\n\n");
 
-    // Build conversation text
-    const conversationHistory = messages.map(m => m.content).join("\n\n");
-    const promptText = `You are a chatbot designed to help people with anything regarding the Paris Olympics 2024.\n\nConversation so far:\n${conversationHistory}\n`;
+    const prompt = `${model.systemInstruction}\n\nHere's what has been discussed so far:\n${conversationHistory}\n`;
 
-    console.log("Prompt sent to Gemini:", promptText);
+    // Generate response using the AI model
+    const result = await model.generateContent(prompt);
 
-    // Initialize Gemini model
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction: "You are a helpful chatbot for the Paris Olympics 2024.",
-    });
+    // Extract the relevant text
+    const text = typeof result.response.text === 'function' ? await result.response.text() : result.response.text || "No content returned";
 
-    // Generate response
-    const result = await model.generateContent({
-      prompt: { text: promptText }, // Ensure prompt is wrapped correctly
-      temperature: 0.7,
-      maxOutputTokens: 500,
-    });
-
-    console.log("Full Gemini response:", JSON.stringify(result, null, 2));
-
-    // Extract assistant's text safely
-    const responseText = result.output?.[0]?.content?.[0]?.text || "No content returned";
-
-    return NextResponse.json({ response: responseText }, { status: 200 });
-
+    // Return the assistant's response as a string
+    return NextResponse.json({ response: text }, { status: 200 });
   } catch (error) {
-    console.error("Error calling Gemini API:", error);
+    console.error("Error in API Call:", error.message);
+    console.error("Full Error Details:", error);
     return NextResponse.json({ error: "Error generating response" }, { status: 500 });
   }
 }
