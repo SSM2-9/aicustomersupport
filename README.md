@@ -5,4 +5,4 @@ Link: https://aicustomersupport-omega.vercel.app
 
 The AI customer support answers any question that you have about the 2024 Paris Olympics in almost any language. Additionally, the website displays the current weather for Paris, the capital of France, as well as links to social media accounts that direct users to the official Olympic accounts.
 
-![Preview](preview)
+![Preview](public/preview.png)
