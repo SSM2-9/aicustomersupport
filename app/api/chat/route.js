@@ -13,7 +13,7 @@ export async function POST(req) {
 
   // Swapped to the live model
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash-live",
+    model: "gemini-2.0-flash",
     systemInstruction: `
       You are an AI chatbot designed to assist users with anything related to the Paris 2024 Olympics. 
       Provide accurate, friendly, and up-to-date information about events, schedules, venues, athletes, 
