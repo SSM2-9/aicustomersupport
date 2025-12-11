@@ -38,7 +38,7 @@ export default function Home() {
       }
   
       const data = await response.json();
-      console.log('Response Data:', data); // Log the data to verify its content
+      console.log('Response Data:', data);
   
       const text = data.response || "No content returned";
   
@@ -57,7 +57,7 @@ export default function Home() {
       setIsLoading(false);
     }
   };
-4
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -65,7 +65,7 @@ export default function Home() {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter' && !isLoading) {
       event.preventDefault(); 
-      sendMessage(); // Send the message on Enter key press
+      sendMessage();
     }
   };
 
@@ -212,6 +212,7 @@ export default function Home() {
                 color="white"
                 borderRadius={16}
                 p={3}
+                sx={{ whiteSpace: 'pre-wrap' }}
               >
                 {message.content}
               </Box>
@@ -231,11 +232,11 @@ export default function Home() {
             sx={{
               backgroundColor: 'rgba(255, 255, 255, 0.8)',
               '& .MuiInputBase-input': {
-                color: 'rgb(24, 24, 51)', // Text color
-                fontFamily: 'Poppins, sans-serif', // Font family
+                color: 'rgb(24, 24, 51)',
+                fontFamily: 'Poppins, sans-serif',
               },
               '& .MuiFormLabel-root': {
-                color: 'rgb(24, 24, 51)', // Label color
+                color: 'rgb(24, 24, 51)',
               },
               '& .MuiInputBase-root': {
                 borderRadius: 2,
@@ -258,7 +259,6 @@ export default function Home() {
           </Tooltip>
         </Stack>
       </Stack>
-      {/* Ensure WeatherWidget is properly defined or imported */}
       <WeatherWidget />
     </Box>
   );
