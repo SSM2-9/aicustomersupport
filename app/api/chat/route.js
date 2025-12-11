@@ -1,47 +1,44 @@
 import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from "groq-sdk";
 
 export async function POST(req) {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
 
   if (!apiKey) {
     console.error("API Key is missing");
     return NextResponse.json({ error: "API Key is missing" }, { status: 500 });
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-
-  // Swapped to the live model
-  const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash-lite",
-    systemInstruction: `
-      You are an AI chatbot designed to assist users with anything related to the Paris 2024 Olympics. 
-      Provide accurate, friendly, and up-to-date information about events, schedules, venues, athletes, 
-      medal standings, tickets, travel, local attractions, and dining options. 
-      Integrated multilingual capabilities: respond in the language the user writes in. 
-      Keep your tone welcoming and engaging, like a helpful Olympic concierge. 
-      Organize your responses into clear paragraphs for readability. 
-      If a user asks something unrelated, gently guide the conversation back to the Paris 2024 Olympics.
-    `
-  });
+  const groq = new Groq({ apiKey });
 
   try {
     const data = await req.json();
 
-    // Construct the conversation history
-    const conversationHistory = data.map(message => message.content).join("\n\n");
+    // Format messages for Groq (OpenAI-compatible format)
+    const messages = [
+      {
+        role: "system",
+        content: `You are an AI chatbot designed to assist users with anything related to the Paris 2024 Olympics. 
+Provide accurate, friendly, and up-to-date information about events, schedules, venues, athletes, 
+medal standings, tickets, travel, local attractions, and dining options. 
+Integrated multilingual capabilities: respond in the language the user writes in. 
+Keep your tone welcoming and engaging, like a helpful Olympic concierge. 
+Organize your responses into clear paragraphs for readability. 
+If a user asks something unrelated, gently guide the conversation back to the Paris 2024 Olympics.`
+      },
+      ...data // Your conversation history
+    ];
 
-    const prompt = `${model.systemInstruction}\n\nHere's what has been discussed so far:\n${conversationHistory}\n`;
+    // Generate response using Groq
+    const completion = await groq.chat.completions.create({
+      messages,
+      model: "llama-3.3-70b-versatile", // Fast and capable model
+      temperature: 0.7,
+      max_tokens: 1024,
+    });
 
-    // Generate response using the AI model
-    const result = await model.generateContent(prompt);
+    const text = completion.choices[0]?.message?.content || "No content returned";
 
-    // Extract the relevant text
-    const text = typeof result.response.text === 'function' 
-      ? await result.response.text() 
-      : result.response.text || "No content returned";
-
-    // Return the assistant's response as a string
     return NextResponse.json({ response: text }, { status: 200 });
   } catch (error) {
     // Handle rate-limit or other errors gracefully
