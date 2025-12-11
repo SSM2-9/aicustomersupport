@@ -23,7 +23,15 @@ Provide accurate, friendly, and up-to-date information about events, schedules, 
 medal standings, tickets, travel, local attractions, and dining options. 
 Integrated multilingual capabilities: respond in the language the user writes in. 
 Keep your tone welcoming and engaging, like a helpful Olympic concierge. 
-Organize your responses into clear paragraphs for readability. 
+
+IMPORTANT FORMATTING RULES:
+- Break down your responses into clear, digestible paragraphs
+- Add line breaks between different topics or sections
+- Use spacing to make information easy to scan
+- For lists or multiple items, put each on a new line with proper spacing
+- Keep paragraphs short (2-4 sentences max)
+- Use natural breaks to organize information visually
+
 If a user asks something unrelated, gently guide the conversation back to the Paris 2024 Olympics.`
       },
       ...data
@@ -32,7 +40,7 @@ If a user asks something unrelated, gently guide the conversation back to the Pa
     // Generate response using Groq
     const completion = await groq.chat.completions.create({
       messages,
-      model: "llama-3.3-70b-versatile", // ✅ Correct model for text
+      model: "llama-3.3-70b-versatile",
       temperature: 0.7,
       max_tokens: 1024,
     });
