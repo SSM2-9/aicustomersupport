@@ -26,13 +26,13 @@ Keep your tone welcoming and engaging, like a helpful Olympic concierge.
 Organize your responses into clear paragraphs for readability. 
 If a user asks something unrelated, gently guide the conversation back to the Paris 2024 Olympics.`
       },
-      ...data // Your conversation history
+      ...data
     ];
 
     // Generate response using Groq
     const completion = await groq.chat.completions.create({
       messages,
-      model: "llama-3.3-70b-versatile", // Fast and capable model
+      model: "llama-3.3-70b-versatile", // ✅ Correct model for text
       temperature: 0.7,
       max_tokens: 1024,
     });
@@ -41,7 +41,6 @@ If a user asks something unrelated, gently guide the conversation back to the Pa
 
     return NextResponse.json({ response: text }, { status: 200 });
   } catch (error) {
-    // Handle rate-limit or other errors gracefully
     if (error.message && error.message.toLowerCase().includes("rate")) {
       console.error("Rate limit reached:", error);
       return NextResponse.json({
